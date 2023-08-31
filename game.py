@@ -9,50 +9,79 @@ def main():
     # load and set the logo
     logo = pygame.image.load("logo32x32.png")
     pygame.display.set_icon(logo)
-    pygame.display.set_caption("Bouncing Head")
+    pygame.display.set_caption("Snake Game")
      
-    # create a surface on screen that has the size of 240 x 180
-    screen = pygame.display.set_mode((1000,667))
+    # Create surface for snake and food to be drawn on
+    screen = pygame.display.set_mode((500, 500))
+    # Fill background
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((0, 0, 0))
     
-    # load my first image
-    image = pygame.image.load("image.png").convert()
-    image.set_colorkey((255,255,255))
+    # Draw background
+    screen.blit(background, (0, 0))
 
-    # set starting positions for image
-    image_x = 50
-    image_y = 50
+    # Update display
+    pygame.display.flip()
 
-    # set speed for image
-    image_x_speed = 1
-    image_y_speed = 1
-    # image.set_alpha(128)
+    # Set direction variables for snake
+    snake_x = 0
+    snake_y = 0
+    sx_change = 0
+    sy_change = 0.05
 
-    # load and set the background image
-    background_image = pygame.image.load("background.png").convert()
+    # Create green square to represent snake
+    snake = pygame.Surface((snake_x, snake_y))
+    snake = snake.convert()
+    snake.fill((0, 255, 0))
+    snake = pygame.draw.rect(screen, (0, 255, 0), (snake_x, snake_y, 10, 10))
+
+    # Draw snake
+    # screen.blit(snake, (snake_x, snake_y))
+
+    # Set location variables for food
+    food_x = 0
+    food_y = 0
 
     # define a variable to control the main loop
     running = True
      
     # main loop
     while running:
+        # check if the snake has hit the edge of the screen
+        if snake_x > 500 or snake_x < 0:
+            # Show "Game Over" screen
+            print("Game Over")
+            running = False
+        if snake_y > 500 or snake_y < 0:
+            # Show "Game Over" screen
+            print("Game Over")
+            running = False
 
-        # check if the image is still on the screen
-        if image_x > 1000 - image.get_width() or image_x < 0:
-            image_x_speed = image_x_speed * -1
-        if image_y > 667 - image.get_height() or image_y < 0:
-            image_y_speed = image_y_speed * -1
-        
-        # update image position
-        image_x += image_x_speed
-        image_y += image_y_speed
+        # change direction of snake based on keypress
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_UP]:
+            sx_change = 0
+            sy_change = -0.05
+        elif pressed[pygame.K_DOWN]:
+            sx_change = 0
+            sy_change = 0.05
+        elif pressed[pygame.K_LEFT]:
+            sx_change = -0.05
+            sy_change = 0
+        elif pressed[pygame.K_RIGHT]:
+            sx_change = 0.05
+            sy_change = 0
+            
+        # update snake location
+        snake_x += sx_change
+        snake_y += sy_change
 
-         # blit background on screen
-        screen.blit(background_image, [0,0])
+        # blit everything to the screen
+        screen.blit(background, (0, 0))
+        snake = pygame.draw.rect(screen, (0, 255, 0), (snake_x, snake_y, 10, 10))
 
-        #blit image to screen
-        screen.blit(image, (image_x, image_y))
-
-        # update the screen to make the changes visible (fullscreen update)
+        # update screen drawing
         pygame.display.flip()
 
         # event handling, gets all event from the event queue
